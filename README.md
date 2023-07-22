@@ -13,3 +13,7 @@
 
 <img src="spherical/2tri1penta_thin.jpg">
 
+<img src="zono/weave.jpg">
+
+<img src="zono/weave4.jpg">
+

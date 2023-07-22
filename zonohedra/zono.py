@@ -106,17 +106,32 @@ def solid(rings):
 
     print ("""]);""")
 
-def weave(facets, ratio, height):
+def openscad_facet(points, thickness):
+    delta = scalar_mul(thickness, get_normal(points))
+    x, y, z = delta
+    print (f"/* delta: {x},{y},{z} */")
+    double_points = points + [ vector_add(x, delta) for x in points ]
+    n = len(points)
+    print ("""polyhedron(points=["""+','.join(f"[{x:f},{y:f},{z:f}]" for x, y, z in double_points) + """], faces=[""")
+    print ('[' + ','.join(str(x) for x in range(n)) + '],')
+    for i in range(n):
+        print ('[' + ','.join( str(x) for x in ( (i+1)%n, i, i+n, n+(i+1)%n ) ) + '],')
+    print ('[' + ','.join(str(x) for x in range(2*n-1, n-1, -1)) + ']')
+    print ("""]);""")
+
+
+
+def weave(facets, ratio, height, thickness):
     print ("""module x() {""")
     for f_ring in facets:
         for a,b,c,d in f_ring:
             points = [ a, b, c, interpol(c, d, ratio), interpol(b, d, ratio), interpol(a, d, ratio) ]
-            print ("""polyhedron(points=["""+','.join(f"[{x},{y},{z}]" for x, y, z in points) + """], faces=[["""+','.join(str(x) for x in range(10))+"""]]);""")
+            openscad_facet(points, thickness)
     print ("""}""")
     dis = -height/2
     print (f"translate([0,0,{dis}]) x();")
 
-def weave2(facets, ratio, height):
+def weave2(facets, ratio, height, thickness):
     print ("""module x() {""")
     for f_ring in facets:
         for a,b,c,d in f_ring:
@@ -124,13 +139,13 @@ def weave2(facets, ratio, height):
             ring_ratio = ratio/get_density(points)
             if ring_ratio < 1:
                 points = [ a, b, c, interpol(c, d, ring_ratio), interpol(b, d, ring_ratio), interpol(a, d, ring_ratio) ]
-            print ("""polyhedron(points=["""+','.join(f"[{x},{y},{z}]" for x, y, z in points) + """], faces=[["""+','.join(str(x) for x in range(10))+"""]]);""")
+            openscad_facet(points, thickness)
     print ("""}""")
     dis = -height/2
     print (f"translate([0,0,{dis}]) x();")
 
 
-def weave3(facets, ratio, ratio2, height):
+def weave3(facets, ratio, ratio2, height, thickness):
     print ("""/* kind: {}, ratio: {}, ratio2: {} */""".format("weave3", ratio, ratio2))
     print ("""module x() {""")
     for i,f_ring in enumerate(facets):
@@ -145,13 +160,13 @@ def weave3(facets, ratio, ratio2, height):
                 points = [ interpol(b, a, ring_ratio), b, interpol(b, c, ring_ratio), interpol(d, c, ring_ratio+shift_ratio), interpol(d, c, shift_ratio), interpol(b, d, ring_ratio), d, interpol(d, a, ring_ratio) ]
             else:
                 points = [ a, b, interpol(b, c, ring_ratio), interpol(d, c, ring_ratio+shift_ratio), interpol(d, c, shift_ratio), interpol(b, d, ring_ratio), interpol(a, d, ring_ratio) ]
-            print ("""polyhedron(points=["""+','.join(f"[{x},{y},{z}]" for x, y, z in points) + """], faces=[["""+','.join(str(x) for x in range(len(points)))+"""]]);""")
+            openscad_facet(points, thickness)
     print ("""}""")
     dis = -height/2
     print (f"translate([0,0,{dis}]) x();")
 
 
-def weave4(facets, ratio, height):
+def weave4(facets, ratio, height, thickness):
     print ("""/* kind: {}, ratio: {} */""".format("weave4", ratio))
     print ("""module x() {""")
     for i,f_ring in enumerate(facets):
@@ -167,13 +182,13 @@ def weave4(facets, ratio, height):
                 points = [ interpol(b, a, ring_ratio), b, interpol(b, c, ring_ratio), interpol(c, d, shift_ratio), interpol(c, d, ring_ratio+shift_ratio), interpol(b, d, ring_ratio), d, interpol(d, a, ring_ratio) ]
             else:
                 points = [ a, b, interpol(b, c, ring_ratio), interpol(c, d, shift_ratio), interpol(c, d, shift_ratio+ring_ratio), interpol(b, d, ring_ratio), interpol(a, d, ring_ratio) ]
-            print ("""polyhedron(points=["""+','.join(f"[{x},{y},{z}]" for x, y, z in points) + """], faces=[["""+','.join(str(x) for x in range(len(points)))+"""]]);""")
+            openscad_facet(points, thickness)
     print ("""}""")
     dis = -height/2
     print (f"translate([0,0,{dis}]) x();")
 
 
-def weave5(facets, ratio, height):
+def weave5(facets, ratio, height, thickness):
     print ("""/* kind: {}, ratio: {} */""".format("weave4", ratio))
     print ("""module x() {""")
     for i,f_ring in enumerate(facets):
@@ -186,7 +201,7 @@ def weave5(facets, ratio, height):
             else:
                 shift_ratio = 1-ring_ratio
             points = [ a, b, interpol(b, c, ring_ratio), interpol(c, d, shift_ratio), interpol(c, d, shift_ratio+ring_ratio), interpol(b, d, ring_ratio), interpol(a, d, ring_ratio) ]
-            print ("""polyhedron(points=["""+','.join(f"[{x},{y},{z}]" for x, y, z in points) + """], faces=[["""+','.join(str(x) for x in range(len(points)))+"""]]);""")
+            openscad_facet(points, thickness)
     print ("""}""")
     dis = -height/2
     print (f"translate([0,0,{dis}]) x();")
@@ -413,6 +428,8 @@ def conn2(facets, slot_width, slot_length, slot_padd, slot_padd2):
     svgfooter()
 
 if __name__ == '__main__':
+    thickness = 3
+
     kind, segments, height, edge_len, ratio, ratio2, slot_width, slot_length, slot_padd, slot_padd2 = (sys.argv + [None, None, None, None, None, None, None, None, None, None, None])[1:11]
     if segments == None:
         segments = '9'
@@ -441,15 +458,15 @@ if __name__ == '__main__':
     if kind == 'solid':
         solid(rings)
     elif kind == 'weave':
-        weave(facets, ratio, height)
+        weave(facets, ratio, height, thickness)
     elif kind == 'weave2':
-        weave2(facets, ratio, height)
+        weave2(facets, ratio, height, thickness)
     elif kind == 'weave3':
-        weave3(facets, ratio, ratio2, height)
+        weave3(facets, ratio, ratio2, height, thickness)
     elif kind == 'weave4':
-        weave4(facets, ratio, height)
+        weave4(facets, ratio, height, thickness)
     elif kind == 'weave5':
-        weave5(facets, ratio, height)
+        weave5(facets, ratio, height, thickness)
     elif kind == 'flat':
         flat(facets, ratio)
     elif kind == 'flat2':
