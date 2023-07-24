@@ -5,6 +5,18 @@ r=100;
 w=8;
 h=6;
 
+/*
+ * alpha = 2*beta
+ * cos (alpha) = 1 / (1-cos(A)) - 1
+ * cos (beta)  = (phi + 1) / (1+cos(A)) - 1
+ *
+ * let x = cos(A)
+ *
+ * 1 / (1-x) -1 = 2 * ( (phi + 1)/(1+x) - 1 )^2 - 1
+ *
+ * x^3+(-2*phi-1/2)x^2+(3*phi+2)x + (-phi-1/2) = 0
+ */
+
 phi=(1+sqrt(5))/2;
 cuberoot=pow(118*phi+85+6*sqrt(1173*phi+729), 1/3);
 cos_A=(1/6)*(4*phi+1) +
