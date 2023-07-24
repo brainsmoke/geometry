@@ -1,25 +1,104 @@
 $fn=100;
+e=.001;
 
-module facet(s,t)
+r=100;
+w=1;
+h=20;
+
+phi=(1+sqrt(5))/2;
+cuberoot=pow(6*sqrt(177)-71,1/3);
+cos_A=(1/6)*(1) -
+      (1/6)*(11)/cuberoot +
+      (1/6)*cuberoot;
+A=acos(cos_A);
+
+cos_alpha=1/(1-cos_A)-1;
+alpha=acos(cos_alpha);
+
+echo (A, alpha*3/2);
+
+module arc(r, w, h)
 {
-    a=164.5;
-    b=24;
-    rotate([90-b,-90,0])
-    rotate([0,0,-a/2])
-    rotate_extrude(angle=a)
-    translate([s,0])
-    square([s/5,s/100],center=true);
+    rotate_extrude(angle=alpha*3/4)
+    translate([r-h/2,0])square([h,w],center=true);
 }
 
-module ball(r,t) {
-rotate([0,0,90])
-multmatrix (m=[[0.000000e+00,1.000000e+00,0.000000e+00,0.000000e+00],[1.000000e+00,0.000000e+00,0.000000e+00,0.000000e+00],[-0.000000e+00,-0.000000e+00,-1.000000e+00,0.000000e+00],[0, 0, 0, 1]]) {facet(r,t);};
-rotate([0,0,-90])
-multmatrix (m=[[5.000000e-01,5.000000e-01,7.071068e-01,0.000000e+00],[-5.000000e-01,-5.000000e-01,7.071068e-01,0.000000e+00],[7.071068e-01,-7.071068e-01,-0.000000e+00,0.000000e+00],[0, 0, 0, 1]]) {facet(r,t);};
-rotate([0,0,90])
-multmatrix (m=[[-5.000000e-01,5.000000e-01,7.071068e-01,0.000000e+00],[-5.000000e-01,5.000000e-01,-7.071068e-01,0.000000e+00],[-7.071068e-01,-7.071068e-01,-0.000000e+00,0.000000e+00],[0, 0, 0, 1]]) {facet(r,t);};
-multmatrix (m=[[0.000000e+00,1.000000e+00,-0.000000e+00,0.000000e+00],[-1.000000e+00,0.000000e+00,0.000000e+00,0.000000e+00],[0.000000e+00,-0.000000e+00,1.000000e+00,0.000000e+00],[0, 0, 0, 1]]) {facet(r,t);};
-multmatrix (m=[[-5.000000e-01,5.000000e-01,-7.071068e-01,0.000000e+00],[5.000000e-01,-5.000000e-01,-7.071068e-01,0.000000e+00],[-7.071068e-01,-7.071068e-01,-0.000000e+00,0.000000e+00],[0, 0, 0, 1]]) {facet(r,t);};
-multmatrix (m=[[5.000000e-01,5.000000e-01,-7.071068e-01,0.000000e+00],[5.000000e-01,5.000000e-01,7.071068e-01,0.000000e+00],[7.071068e-01,-7.071068e-01,-0.000000e+00,0.000000e+00],[0, 0, 0, 1]]) {facet(r,t);};
+module chopped_arc(r,w,h)
+{
+    difference(){
+        arc(r,w,h);
+
+        rotate([-A,0,0])
+        translate([r,0,0])
+        cube([w+h,w+h,w-e],center=true);
+    }
 }
-ball(160, .8);
+
+module spherical_arc(r,w,h)
+{
+    intersection()
+    {
+        chopped_arc(r+h,w,h+r);
+        difference()
+        {
+            sphere(r);
+            sphere(r-h);
+        }
+    }
+}
+
+module step_x()
+{
+    rotate([0,0,alpha/2])rotate([A,0,0])
+    children();
+}
+
+module step_y()
+{
+    rotate([0,0,3*alpha/2])rotate([180,0,0])
+    children();
+}
+
+module tri()
+{
+    children();
+    step_x(){
+        children();
+        step_x(){
+            children();
+        }
+    }
+}
+
+module extend()
+{
+    children();
+    step_y()tri()children();
+}
+
+module ball(r,w,h)
+{
+    tri()extend()chopped_arc(r,w,h);
+}
+
+module smooth_ball(r,w,h)
+{
+    tri()extend()spherical_arc(r,w,h);
+}
+
+module smooth_ball_alt(r,w,h)
+{
+    intersection()
+    {
+        tri()extend()arc(r+h,w,h+r);
+        difference()
+        {
+            sphere(r);
+            sphere(r-h);
+        }
+    }
+}
+
+//smooth_ball(r,w,h); /* slow */
+//smooth_ball_alt(r,w,h); /* slow */
+ball(r,w,h);

@@ -7,7 +7,7 @@
 
 <img src="polyhedra/kD-chromosomes.jpg">
 
-<img src="spherical/2tri1.jpg">
+<img src="spherical/2tri1tri.jpg">
 
 <img src="spherical/2tri1penta.jpg">
 
