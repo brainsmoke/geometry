@@ -42,11 +42,19 @@ def footer():
 def d(points):
     return 'M '+' L '.join(f"{x:f} {y:f}" for x, y in points)+'z'
 
-def path(points, x=None, y=None):
+def start_group(x=None, y=None):
     if None not in (x, y):
         print (f'<g transform="translate({x:f}, {y:f})">')
+    else:
+        print ('<g>')
+
+def end_group():
+    print('</g>')
+
+def path(paths):
     print ("""<path style="fill:none;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" """)
-    print ('d="' + d(points) + '" />')
-    if None not in (x, y):
-        print ('</g>')
+    print ('d="' + ' '.join( d(points) for points in paths ) + '" />')
+
+def unsafe_text(text, x=0, y=0, color="#000000"):
+    print(f'<text xml:space="preserve" style="font-size:5pt;line-height:1.25;font-family:sans-serif;text-anchor:middle;text-align:center;fill:{color};fill-opacity:1;" x="{x:f}" y="{y:f}">{text}</text>')
 
