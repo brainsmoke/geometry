@@ -128,7 +128,7 @@ def flat(kind, r, width, subdivisions, thickness, notch_depth):
     v2 = cmath.rect(notch_depth, 3*(cmath.tau/8)-dihedral/2)
     d2 = cmath.rect(thickness,   5*(cmath.tau/8)-dihedral/2)
 
-    joint = [ (z.real, z.imag) for z in ( 0, v1, v1+d1, d1, d1+v2, d1+v2-d2, d1-d2 ) ]
+    joint = [ (z.real, z.imag) for z in ( -d1, v1-d1, v1, 0, v2, v2-d2, -d2 ) ]
 
     shapes.append(joint)
     c = tiling['shape_counts'][0] * 6/2

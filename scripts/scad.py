@@ -71,6 +71,62 @@ module arc()
 
 """
 
+flatarc = """
+
+module subdiv_arc(a, n)
+{
+    if (n > 0)
+        rotate([0,0,a])
+        {
+            children();
+            subdiv_arc(a,n-1)children();
+        }
+}
+
+module left_conn()
+{
+	translate([r-thickness,(r-thickness)*tan(alpha/2/subdivisions/2), (w/2-thickness)/3])
+	rotate([0,0,45+alpha/2/subdivisions/2])
+	connector();
+}
+
+module joint()
+{
+    translate([r-thickness,0,0])
+    rotate([0,90,0])
+    rotate([0,0,90-A])
+    top_joint();
+
+    for (a = [0, -A, 180-A] )
+        rotate([a,0,0])
+            left_conn();
+}
+
+module subdiv()
+{
+    translate([r-thickness,0,0])
+    rotate([0,90,0])
+    rotate([0,0,90])
+    top_div();
+    for (a = [0, 180] )
+        rotate([a,0,0])
+            left_conn();
+}
+
+
+module arc()
+{
+    joint();
+
+    subdiv_arc(alpha/2/subdivisions, subdivisions-1)subdiv();
+
+    rotate([-A,0,0])
+    subdiv_arc(alpha/2/subdivisions, subdivisions-1)subdiv();
+}
+
+
+"""
+
 generator = {
     'penta':"""
 /*
@@ -223,6 +279,29 @@ thickness = {thickness};
 
     shape_module("big_arc", shapes[arc_ix])
     shape_module("small_arc", shapes[arc_ix+1])
+
+    print(f"{kind}()extend()arc();")
+
+def flat(shapes, kind, r, width, subdivisions, thickness):
+    print(f"""
+r = {r};
+w = {width};
+subdivisions = {subdivisions};
+thickness = {thickness};
+
+""")
+    print(flatarc)
+    print(generator[kind])
+
+    shape_module("top_joint", shapes[0])
+    arc_ix = 1
+    top_div = []
+    bottom_div = []
+    if subdivisions > 1:
+        arc_ix=2
+        top_div = shapes[1]
+    shape_module("top_div", top_div)
+    shape_module("connector", shapes[arc_ix])
 
     print(f"{kind}()extend()arc();")
 

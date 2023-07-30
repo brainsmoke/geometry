@@ -6,9 +6,9 @@ import kit, scad, plot
 
 parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-#group = parser.add_mutually_exclusive_group(required=True)
-#group.add_argument('-scad', action='store_true')
-#group.add_argument('-svg', action='store_true')
+group = parser.add_mutually_exclusive_group(required=True)
+group.add_argument('-scad', action='store_true')
+group.add_argument('-svg', action='store_true')
 
 parser.add_argument('-tiling', type=str, default='penta', choices=['tri', 'penta'], help="kind of tiling")
 parser.add_argument('-r', type=float, default=250., help="outer radius, measured at the midpoint of the facet")
@@ -30,10 +30,13 @@ cutwidth=args.cut_width
 
 shapes, shape_desc = kit.flat(kind, r, width, subdivisions, thickness, notch_depth)
 
-plot.start(cutwidth=cutwidth)
+if args.scad:
+    scad.flat(shapes, kind, r, width, subdivisions, thickness)
+elif args.svg:
+    plot.start(cutwidth=cutwidth)
 
-for points, desc in zip(shapes, shape_desc):
-    plot.plot([points], desc)
+    for points, desc in zip(shapes, shape_desc):
+        plot.plot([points], desc)
  
-plot.end()
+    plot.end()
 
