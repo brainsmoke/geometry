@@ -14,7 +14,7 @@ parser.add_argument('-tiling', type=str, default='penta', choices=['tri', 'penta
 parser.add_argument('-r', type=float, default=250., help="outer radius, measured at the midpoint of the facet")
 parser.add_argument('-width', type=float, default=22., help="tube width")
 parser.add_argument('-height', type=float, default=22., help="tube height")
-parser.add_argument('-subdivisions', type=int, default=1, help="number of subdivisions")
+parser.add_argument('-subdivisions', type=int, default=2, help="number of subdivisions")
 parser.add_argument('-thickness', type=float, default=3., help="material thickness")
 parser.add_argument('-notch-size', type=float, default=3., help="notch size")
 parser.add_argument('-cut-width', type=float, default=.3, help="laser cutter's cutting width")
