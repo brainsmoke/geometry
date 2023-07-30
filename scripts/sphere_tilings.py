@@ -46,14 +46,16 @@ def chiral_2_to_1(r, width, subdivisions=1, kind='penta'):
         (  facet_r,                    -half_w )
     ] )
 
-    shapes.append( [
-        ( -facet_r, -half_w ),
-        ( -facet_r,  half_w ),
-        (  facet_r,  half_w ),
-        (  facet_r, -half_w )
-    ] )
+    shape_counts = [ arc_count * 2 ]
 
-    shape_counts = ( arc_count * 2, arc_count * 3 * (subdivisions-1) )
+    if subdivisions > 1:
+        shapes.append( [
+            ( -facet_r, -half_w ),
+            ( -facet_r,  half_w ),
+            (  facet_r,  half_w ),
+            (  facet_r, -half_w )
+        ] )
+        shape_counts.append( arc_count * 3 * (subdivisions-1) )
 
     return { 'dihedral' : dihedral, 'shapes' : shapes, 'shape_counts' : shape_counts }
 
