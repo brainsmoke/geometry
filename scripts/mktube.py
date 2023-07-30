@@ -5,10 +5,11 @@ import sys, cmath
 import plot, kit
 
 kind = (sys.argv[1:] + ['penta'])[0]
-r = 360 # outer radius, measured at the midpoint of the facet
-width = 22
-height = 22
-subdivisions=3
+assert kind in ('penta', 'tri')
+r = 250 # outer radius, measured at the midpoint of the facet
+width = 18
+height = 18
+subdivisions=2
 notch_width = 3
 
 thickness=3
