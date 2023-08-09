@@ -7,6 +7,7 @@ consisting of triangles and pentagons ( `-penta` ), or triangles and triangles (
 
 ### tube.py
 
+Makes the edges of the tiling out of hollow, rectangular profiles.
 
 
 ```
@@ -36,6 +37,7 @@ optional arguments:
 
 ### flat.py
 
+Makes the edges of the tiling out of a single layer of material.
 
 ```
 $ ./flat.py --help
