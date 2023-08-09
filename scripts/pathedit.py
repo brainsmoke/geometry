@@ -5,6 +5,12 @@ from linear import *
 FLEX = 1j
 epsilon = 1e-8
 
+def full_indent(a, b, angle, context):
+    indent = context['indent']
+    return replace_line( a, b, (
+        ( -indent, FLEX ),
+    ) )
+
 def two_notches(a, b, angle, context):
 
     width = context['width']
@@ -24,6 +30,9 @@ def cut_corners(a, b, angle, context):
     width = context['width']
     indent = context['indent']
 
+    if width*2 > dist(b,a):
+        return full_indent(a, b, angle, context)
+
     return replace_line( a, b, (
         ( -indent, width ),
         (       0, FLEX  ),
@@ -35,6 +44,9 @@ def cut_corners_inverse(a, b, angle, context):
 
     width = context['width']
     indent = context['indent']
+
+    if width*2 > dist(b,a):
+        return identity(a, b, angle, context)
 
     return replace_line( a, b, (
         (       0, width ),
@@ -49,6 +61,9 @@ def alt_corners_inverse(a, b, angle, context):
     width = context['alt']
     indent = context['indent']
 
+    if width*2 > dist(b,a):
+        return identity(a, b, angle, context)
+
     return replace_line( a, b, (
         (       0, width ),
         ( -indent, FLEX  ),
@@ -62,6 +77,8 @@ def uneven_corners(a, b, angle, context):
     left = context['left']
     right = context['right']
     indent = context['indent']
+    if left + right > dist(b,a):
+        return identity(a, b, angle, context)
 
     return replace_line( a, b, (
         (       0, left  ),
@@ -75,6 +92,8 @@ def uneven_corners_reverse(a, b, angle, context):
     left = context['left']
     right = context['right']
     indent = context['indent']
+    if left + right > dist(b,a):
+        return identity(a, b, angle, context)
 
     return replace_line( a, b, (
         (       0, right ),
