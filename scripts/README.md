@@ -15,7 +15,7 @@ $ ./tube.py --help
 usage: tube.py [-h] (-scad | -svg) [-tiling {tri,penta}] [-r R] [-width WIDTH]
                [-height HEIGHT] [-subdivisions SUBDIVISIONS]
                [-thickness THICKNESS] [-notch-size NOTCH_SIZE]
-               [-cut-width CUT_WIDTH]
+               [-kerf-offset KERF_OFFSET]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -31,7 +31,8 @@ optional arguments:
   -thickness THICKNESS  material thickness (default: 3.0)
   -notch-size NOTCH_SIZE
                         notch size (default: 3.0)
-  -cut-width CUT_WIDTH  laser cutter's cutting width (default: 0.3)
+  -kerf-offset KERF_OFFSET
+                        half the laser cutter's cutting width (default: 0)
 ```
 
 
@@ -43,7 +44,7 @@ Makes the edges of the tiling out of a single layer of material.
 $ ./flat.py --help
 usage: flat.py [-h] (-scad | -svg) [-tiling {tri,penta}] [-r R] [-width WIDTH]
                [-subdivisions SUBDIVISIONS] [-thickness THICKNESS]
-               [-notch-depth NOTCH_DEPTH] [-cut-width CUT_WIDTH]
+               [-notch-depth NOTCH_DEPTH] [-kerf-offset KERF_OFFSET]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -58,5 +59,6 @@ optional arguments:
   -thickness THICKNESS  material thickness (default: 3.0)
   -notch-depth NOTCH_DEPTH
                         notch depth (default: 10)
-  -cut-width CUT_WIDTH  laser cutter's cutting width (default: 0.3)
+  -kerf-offset KERF_OFFSET
+                        half the laser cutter's cutting width (default: 0)
 ```
