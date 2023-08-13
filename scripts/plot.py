@@ -16,11 +16,11 @@ def box(point_list):
     h = max(y for points in point_list for _,y in points) - y
     return ( x, y, w, h )
 
-def start(margin=3, width=600, height=400, cutwidth=0):
+def start(margin=3, width=600, height=400, kerf_offset=0):
     global pad_x, pad_y, max_x, grow
     pad_x, pad_y = margin, margin
     max_x = width
-    grow = cutwidth/2
+    grow = kerf_offset
     svg.header(width, height)
 
 def end():

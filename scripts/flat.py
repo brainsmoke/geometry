@@ -16,7 +16,7 @@ parser.add_argument('-width', type=float, default=22., help="tube width")
 parser.add_argument('-subdivisions', type=int, default=1, help="number of subdivisions")
 parser.add_argument('-thickness', type=float, default=3., help="material thickness")
 parser.add_argument('-notch-depth', type=float, default=10, help="notch depth")
-parser.add_argument('-cut-width', type=float, default=.3, help="laser cutter's cutting width")
+parser.add_argument('-kerf-offset', type=float, default=0, help="half the laser cutter's cutting width")
 
 args = parser.parse_args()
 
@@ -26,14 +26,14 @@ width = args.width
 subdivisions= args.subdivisions
 notch_depth = args.notch_depth
 thickness=args.thickness
-cutwidth=args.cut_width
+kerf_offset=args.kerf_offset
 
 shapes, shape_desc = kit.flat(kind, r, width, subdivisions, thickness, notch_depth)
 
 if args.scad:
     scad.flat(shapes, kind, r, width, subdivisions, thickness)
 elif args.svg:
-    plot.start(cutwidth=cutwidth)
+    plot.start(kerf_offset=kerf_offset)
 
     for points, desc in zip(shapes, shape_desc):
         plot.plot([points], desc)
