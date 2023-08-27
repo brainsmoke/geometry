@@ -6,8 +6,16 @@ w=8;
 h=6;
 
 /*
+ * alpha: the regular spherical triangles' great-circle arc (edge-length)
+ * beta:  the regular spherical pentagons' great-circle arc (edge-length)
+ *
+ * A: the triangles' corner arc
+ * B: the pentagons' corner arc
+ * A+B = tau/2
+ *
  * alpha = 2*beta
  * cos (alpha) = 1 / (1-cos(A)) - 1
+ * cos (beta)  = (phi + 1) / (1-cos(B)) - 1
  * cos (beta)  = (phi + 1) / (1+cos(A)) - 1
  *
  * let x = cos(A)
