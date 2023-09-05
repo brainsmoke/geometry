@@ -246,5 +246,5 @@ extend()
 {
     chopped_arc(r+1,w,1);
     color([0,1,0])translate([r+2,5,0])arrow(10,w/3,3);
-    color([0,0,.8])translate([r+2,-8,-w*.6])rotate([90,0,90])text(str($count));
+    color([0,0,.8])translate([r+2,-8,-w*.6])rotate([90,0,90])linear_extrude(1)text(str($count));
 }
