@@ -1,25 +1,36 @@
 
 import math
 
+phi=(1+math.sqrt(5))/2;
+cuberoot_penta=pow(118*phi+85+6*math.sqrt(1173*phi+729), 1/3);
+cuberoot_tri=pow(6*math.sqrt(177)-71,1/3);
+
+number_of_arcs = {
+    'penta' : 30,
+    'tri'   : 6,
+}
+
+cosines = {
+    'penta' : (1/6)*( (4*phi+1) + (12*phi+7)/cuberoot_penta - cuberoot_penta ),
+    'tri'   : (1/6)*( 1 - 11/cuberoot_tri + cuberoot_tri ),
+}
+
+
+def chiral_2_to_1_angles(kind='penta'):
+    cos_A = cosines[ kind ]
+    A = math.acos(cos_A)
+    cos_alpha = 1/(1-cos_A)-1
+    alpha = math.acos(cos_alpha)
+    return (A, alpha)
+
+
 def chiral_2_to_1(r, width, subdivisions=1, kind='penta'):
     assert kind in ('penta', 'tri')
     assert subdivisions >= 1
 
-    phi=(1+math.sqrt(5))/2;
-    cuberoot_penta=pow(118*phi+85+6*math.sqrt(1173*phi+729), 1/3);
-    cuberoot_tri=pow(6*math.sqrt(177)-71,1/3);
+    arc_count = number_of_arcs[ kind ]
 
-    arc_count = {
-        'penta' : 30,
-        'tri'   : 6,
-    }[ kind ]
-
-    angles = {
-        'penta' : (1/6)*( (4*phi+1) + (12*phi+7)/cuberoot_penta - cuberoot_penta ),
-        'tri'   : (1/6)*( 1 - 11/cuberoot_tri + cuberoot_tri ),
-    }
-
-    cos_A = angles[ kind ]
+    cos_A = cosines[ kind ]
     sin_A = math.sqrt( 1 - cos_A*cos_A )
     A = math.acos(cos_A)
     cos_alpha = 1/(1-cos_A)-1
