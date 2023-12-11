@@ -3,15 +3,18 @@ import math
 
 phi=(1+math.sqrt(5))/2;
 cuberoot_penta=pow(118*phi+85+6*math.sqrt(1173*phi+729), 1/3);
+cuberoot_quad=pow(24*math.sqrt(78)-181, 1/3);
 cuberoot_tri=pow(6*math.sqrt(177)-71,1/3);
 
 number_of_arcs = {
     'penta' : 30,
+    'quad'  : 12,
     'tri'   : 6,
 }
 
 cosines = {
     'penta' : (1/6)*( (4*phi+1) + (12*phi+7)/cuberoot_penta - cuberoot_penta ),
+    'quad'  : (1/6)*( 5 - 23/cuberoot_quad + cuberoot_quad ),
     'tri'   : (1/6)*( 1 - 11/cuberoot_tri + cuberoot_tri ),
 }
 
@@ -25,7 +28,7 @@ def chiral_2_to_1_angles(kind='penta'):
 
 
 def chiral_2_to_1(r, width, subdivisions=1, kind='penta'):
-    assert kind in ('penta', 'tri')
+    assert kind in cosines
     assert subdivisions >= 1
 
     arc_count = number_of_arcs[ kind ]

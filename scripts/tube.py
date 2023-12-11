@@ -10,7 +10,7 @@ group = parser.add_mutually_exclusive_group(required=True)
 group.add_argument('-scad', action='store_true')
 group.add_argument('-svg', action='store_true')
 
-parser.add_argument('-tiling', type=str, default='penta', choices=['tri', 'penta'], help="kind of tiling")
+parser.add_argument('-tiling', type=str, default='penta', choices=['tri', 'quad', 'penta'], help="kind of tiling")
 parser.add_argument('-r', type=float, default=250., help="outer radius, measured at the midpoint of the facet")
 parser.add_argument('-width', type=float, default=22., help="tube width")
 parser.add_argument('-height', type=float, default=22., help="tube height")
