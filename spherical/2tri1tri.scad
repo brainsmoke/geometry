@@ -87,21 +87,16 @@ module extend()
     step_y()tri()children();
 }
 
-module ball(r,w,h)
+module ball()
 {
-    tri()extend()chopped_arc(r,w,h);
-}
-
-module smooth_ball(r,w,h)
-{
-    tri()extend()spherical_arc(r,w,h);
+    tri()extend()children();
 }
 
 module smooth_ball_alt(r,w,h)
 {
     intersection()
     {
-        tri()extend()arc(r+h,w,h+r);
+        ball()arc(r+h,w,h+r);
         difference()
         {
             sphere(r);
@@ -110,6 +105,8 @@ module smooth_ball_alt(r,w,h)
     }
 }
 
-//smooth_ball(r,w,h); /* slow */
+ball()chopped_arc(r,w,h);
+
+//ball()spherical_arc(r,w,h); /* slow */
+
 //smooth_ball_alt(r,w,h); /* slow */
-ball(r,w,h);
