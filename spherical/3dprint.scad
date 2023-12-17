@@ -6,13 +6,20 @@ w=12;
 h=12;
 e=.001;
 
+joint_spacing=.5; /* positive -> more space, negative -> friction fit */
+joint_h = h/2;
+joint_w = w/2;
+
+hole_h = joint_h+joint_spacing;
+hole_w = joint_w+joint_spacing;
+
 screw_hole_d=2.5;
 screw_depth=25;
 screw_head_d=7;
 
 head_off_center=w*(3/8);
 
-module drillhole(diameter, length, head_diameter)
+module drill_hole(diameter, length, head_diameter)
 {
 	rotate([90,0,0])
 	{
@@ -24,24 +31,34 @@ module drillhole(diameter, length, head_diameter)
 	}
 }
 
+module drill_holes()
+{
+	ball()both_sides()
+	{
+		translate([r-h/2,-head_off_center,0])
+		drill_hole(screw_hole_d,screw_depth,screw_head_d);
+	}
+}
+
+module joint_holes()
+{
+	difference()
+	{
+		ball() chopped_arc(r-(hole_h)/2,hole_w,hole_h);
+		chopped_arc(r-(hole_h-e)/2, hole_w+e, hole_h+e);
+	}
+}
+
 difference()
 {
 	union()
 	{
-		chopped_arc(r-h/4,w/2,h/2);
+		chopped_arc(r-joint_h/2,joint_w,joint_h);
 		difference()
 		{
 			chopped_arc(r,w,h);
-			difference()
-			{
-				ball() chopped_arc(r-h/4,w/2,h/2);
-				chopped_arc(r-h/4-e/2,w/2+e,h/2+e);
-			}
+			joint_holes();
 		}
 	}
-	ball()both_sides()
-	{
-		translate([r-h/2,-head_off_center,0])
-		drillhole(screw_hole_d,screw_depth,screw_head_d);
-	}
+	drill_holes();
 }
