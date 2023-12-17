@@ -44,8 +44,8 @@ module joint_holes()
 {
 	difference()
 	{
-		ball() chopped_arc(r-(hole_h)/2,hole_w,hole_h);
-		chopped_arc(r-(hole_h-e)/2, hole_w+e, hole_h+e);
+		ball() chopped_arc(r-(h-hole_h)/2,hole_w,hole_h);
+		chopped_arc(r-(h-hole_h-e)/2, hole_w+e, hole_h+e);
 	}
 }
 
@@ -53,7 +53,7 @@ difference()
 {
 	union()
 	{
-		chopped_arc(r-joint_h/2,joint_w,joint_h);
+		chopped_arc(r-(h-joint_h)/2,joint_w,joint_h);
 		difference()
 		{
 			chopped_arc(r,w,h);
