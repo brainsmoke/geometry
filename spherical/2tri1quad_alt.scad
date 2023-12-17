@@ -34,42 +34,7 @@ A=acos(cos_A);
 cos_alpha=1/(1-cos_A)-1;
 alpha=acos(cos_alpha);
 
-module arc(r, w, h)
-{
-    rotate_extrude(angle=alpha*3/2)
-    translate([r-h/2,0])square([h,w],center=true);
-}
-
-module chopped(r,w,h)
-{
-        for (i = [0, alpha*3/2])
-        rotate([0,0,i])
-        rotate([A,0,0])
-        translate([r,0,0])
-        cube([2*(w+h),2*(w+h),w-e],center=true);
-}
-
-module chopped_arc(r,w,h)
-{
-    difference()
-    {
-        arc(r,w,h);
-        chopped(r,w,h);
-    }
-}
-
-module spherical_arc(r,w,h)
-{
-    intersection()
-    {
-        chopped_arc(r+h,w,h+r);
-        difference()
-        {
-            sphere(r);
-            sphere(r-h);
-        }
-    }
-}
+include <arcs.scad>
 
 module step_x()
 {
