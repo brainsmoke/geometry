@@ -316,10 +316,17 @@ module extend()
 """
 }
 
-def shape_module(name, points):
+def shape_module(name, paths):
+    points = ','.join( f"[{x}, {y}]" for path in paths for x,y in path )
+    paths_indices = []
+    n = 0
+    for path in paths:
+        paths_indices.append( '[' + ','.join(f"{ix}" for ix in range(n, n+len(path))) + ']' )
+        n += len(path)
+
     print (f"module {name}"+""" ()
 {
-	linear_extrude(thickness) polygon(["""+','.join(f"[{x}, {y}]" for x,y in points)+"""]);
+	linear_extrude(thickness) polygon(["""+points+'],['+','.join(paths_indices)+"""]);
 }""")
 
 def tube(shapes, kind, r, width, height, subdivisions, thickness):
