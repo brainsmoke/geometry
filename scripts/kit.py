@@ -15,6 +15,11 @@ def arc( lengths, arcs ):
        a += da
    return poly[:-1]
 
+def get_radius_from_segment_size(kind, subdivisions, segment_size):
+    tiling = sphere_tilings.chiral_2_to_1(1., .01/max(1,subdivisions), subdivisions, kind)
+    a, b = tiling['shapes'][0][0], tiling['shapes'][0][-1]
+    return segment_size/linear.dist(a, b)
+
 def tube(kind, r, width, height, subdivisions, thickness, notch_width):
 
     radius_tiling = sphere_tilings.chiral_2_to_1(r,           width, subdivisions, kind)
