@@ -1,4 +1,5 @@
 
+import itertools
 from math import *
 from linear import *
 
@@ -129,6 +130,17 @@ def replace_line(a, b, jag):
 
 #    print(edges)
     return edges
+
+def lengths_and_angles_to_polyline(lengths, arcs):
+   v = 0, 0
+   a = 0
+   poly = [v]
+   for l, da in itertools.zip_longest(lengths, arcs, fillvalue=0):
+       v = vector_add(v, (l*sin(a), l*cos(a)))
+       poly.append(v)
+       a += da
+   return poly[:-1]
+
 
 def purge_doubles(path):
     elems = []

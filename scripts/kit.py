@@ -1,19 +1,9 @@
-import math, cmath
+import math, cmath, itertools
 
 import sphere_tilings, pathedit, linear
 
 def line_len(shape, ix):
     return linear.dist(shape[ix], shape[(ix+1)%len(shape)])
-
-def arc( lengths, arcs ):
-   v = 0, 0
-   a = 0
-   poly = [v]
-   for l, da in zip(lengths, arcs):
-       v = linear.vector_add(v, (l*math.sin(a), l*math.cos(a)))
-       poly.append(v)
-       a += da
-   return poly[:-1]
 
 def get_radius_from_segment_size(kind, subdivisions, segment_size):
     tiling = sphere_tilings.chiral_2_to_1(1., .01/max(1,subdivisions), subdivisions, kind)
@@ -104,8 +94,8 @@ def tube(kind, r, width, height, subdivisions, thickness, notch_width):
     notches_small = 'I' + 'C'*(subdivisions  +1) + 'IU' + 'a'*(subdivisions  -1) + 'u'
     notches_large = 'I' + 'C'*(subdivisions*2+1) + 'IU' + 'a'*(subdivisions*2-1) + 'u'
 
-    small_side = arc(lengths_arc_small, angles_arc_small)
-    large_side = arc(lengths_arc_large, angles_arc_large)
+    small_side = pathedit.lengths_and_angles_to_polyline(lengths_arc_small, angles_arc_small)
+    large_side = pathedit.lengths_and_angles_to_polyline(lengths_arc_large, angles_arc_large)
 
     shapes.append( [ pathedit.subdivide(large_side, notches_large, (0,)*len(large_side), ctx ) ] )
     shapes.append( [ pathedit.subdivide(small_side, notches_small, (0,)*len(small_side), ctx ) ] )
