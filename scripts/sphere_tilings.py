@@ -1,5 +1,6 @@
 
 import math
+import linear
 
 phi=(1+math.sqrt(5))/2;
 cuberoot_penta=pow(118*phi+85+6*math.sqrt(1173*phi+729), 1/3);
@@ -18,6 +19,10 @@ cosines = {
     'tri'   : (1/6)*( 1 - 11/cuberoot_tri + cuberoot_tri ),
 }
 
+def radius_from_segment_size(segment_size, subdivisions, kind='penta'):
+    tiling = chiral_2_to_1(1., .01/max(1,subdivisions), subdivisions, kind)
+    a, b = tiling['shapes'][0][0], tiling['shapes'][0][-1]
+    return segment_size/linear.dist(a, b)
 
 def chiral_2_to_1_angles(kind='penta'):
     cos_A = cosines[ kind ]

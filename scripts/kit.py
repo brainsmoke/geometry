@@ -116,7 +116,7 @@ def flat(kind, r, width, subdivisions, thickness, notch_depth):
 
     shapes = []
     shapes.append( [pathedit.subdivide(tiling_shapes[0], '2II2II2I', (dihedral,0,0,dihedral,0,0,dihedral,0), ctx)] )
-    for i in range(1, len(shapes)):
+    for i in range(1, len(tiling_shapes)):
         shapes.append( [pathedit.subdivide(tiling_shapes[i], '2I2I', (dihedral,0,dihedral,0), ctx)] )
 
     v1 = cmath.rect(notch_depth, 3*(cmath.tau/8)+dihedral/2)

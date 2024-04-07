@@ -2,7 +2,7 @@
 
 import sys, cmath, argparse
 
-import dtube_kit, scad, plot
+import dtube_kit, sphere_tilings, scad, plot
 
 parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
@@ -38,7 +38,7 @@ notch_size = args.notch_size
 kerf_offset=args.kerf_offset
 
 if args.mid_segment != None:
-    r = dtube_kit.get_radius_from_segment_size(kind, subdivisions, args.mid_segment) + thickness+top_space
+    r = sphere_tilings.radius_from_segment_size(args.mid_segment, subdivisions, kind) + thickness+top_space
 
 shapes, shape_desc = dtube_kit.double_tube(kind, r, width, top_space, bottom_space, subdivisions, thickness, notch_size)
 
