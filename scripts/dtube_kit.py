@@ -5,11 +5,6 @@ import sphere_tilings, pathedit, linear
 def line_len(shape, ix):
     return linear.dist(shape[ix], shape[(ix+1)%len(shape)])
 
-def get_radius_from_segment_size(kind, subdivisions, segment_size):
-    tiling = sphere_tilings.chiral_2_to_1(1., .01/max(1,subdivisions), subdivisions, kind)
-    a, b = tiling['shapes'][0][0], tiling['shapes'][0][-1]
-    return segment_size/linear.dist(a, b)
-
 def double_tube(kind, r, width, top_space, bottom_space, subdivisions, thickness, notch_width):
 
     height = 3*thickness+top_space+bottom_space
