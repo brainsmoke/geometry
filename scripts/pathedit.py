@@ -26,6 +26,44 @@ def two_notches(a, b, angle, context):
     ) )
 
 
+def sticky_outy_bits(a, b, angle, context):
+
+    width = context['width']
+    indent = context['indent']
+
+    return replace_line( a, b, (
+        ( -indent, width ),
+        (       0, width ),
+        ( -indent, FLEX  ),
+        (       0, width ),
+        ( -indent, width ),
+    ) )
+
+
+def start_bits(a, b, angle, context):
+
+    width = context['width']
+    indent = context['indent']
+
+    return replace_line( a, b, (
+        ( -indent, width ),
+        (       0, width ),
+        ( -indent, FLEX  ),
+    ) )
+
+
+def end_bits(a, b, angle, context):
+
+    width = context['width']
+    indent = context['indent']
+
+    return replace_line( a, b, (
+        ( -indent, FLEX  ),
+        (       0, width ),
+        ( -indent, width ),
+    ) )
+
+
 def cut_corners(a, b, angle, context):
 
     width = context['width']
@@ -164,12 +202,16 @@ shape_map = {
 #    'S' : jagged_shortedge,
 #    'L' : jagged_longedge,
     '2' : two_notches,
+    'b' : sticky_outy_bits,
     'c' : cut_corners,
     'C' : cut_corners_inverse,
     'a' : alt_corners_inverse,
     'u' : uneven_corners,
     'U' : uneven_corners_reverse,
     'I' : identity,
+    'f' : full_indent,
+    's' : start_bits,
+    'e' : end_bits,
 }
 
 def subdivide(shape, types, angles, context, shape_map=shape_map):
