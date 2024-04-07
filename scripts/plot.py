@@ -7,7 +7,7 @@ pad_x, pad_y = 3, 3
 cur_x, cur_y = 0, 0
 next_y = 0
 max_x = 600
-grow = .3/2
+grow = 0
 
 def box(point_list):
     x = min(x for points in point_list for x,_ in points)
