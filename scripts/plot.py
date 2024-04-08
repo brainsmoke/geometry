@@ -8,6 +8,7 @@ cur_x, cur_y = 0, 0
 next_y = 0
 max_x = 600
 grow = 0
+flip_y = True # in the SVG coordinate system, higher Y coordinates are lower
 
 def box(point_list):
     x = min(x for points in point_list for x,_ in points)
@@ -27,8 +28,15 @@ def end():
     svg.footer()
 
 def plot(paths, text=None):
+
+    inside_out = [ pathedit.is_inside_out(p) for p in paths ]
+
     if grow != 0:
         paths = [ pathedit.grow(p, grow) for p in paths ]
+
+    if flip_y:
+        paths = [ pathedit.flip_y(p) for p in paths ]
+
     x, y, w, h = box(paths)
 
     global cur_x, cur_y, next_y
@@ -36,7 +44,9 @@ def plot(paths, text=None):
         cur_x, cur_y = 0, next_y
 
     svg.start_group(cur_x-x, cur_y-y)
-    svg.path(paths)
+    svg.path( [ p for i,p in enumerate(paths) if not inside_out[i] ], color="#000000")
+    svg.path( [ p for i,p in enumerate(paths) if     inside_out[i] ], color="#0000ff")
+
     if text != None:
         svg.unsafe_text(text, x=x+w/2, y=y+h/2, color='#ff0000')
     svg.end_group()

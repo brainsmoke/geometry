@@ -16,54 +16,135 @@ module subdiv_arc(a, n)
 
 module joint()
 {
-    translate([r-thickness,0,0])
-    rotate([0,90,0])
-    rotate([0,0,90-A])
-    top_joint();
-    
-    translate([r-h+thickness,0,0])
+    translate([r,0,0])
     rotate([0,-90,0])
-    rotate([0,0,A-90])
+    rotate([0,0,A+90])
+    top_joint();
+
+    translate([r-h,0,0])
+    rotate([0,90,0])
+    rotate([0,0,-A-90])
     bottom_joint();
 }
 
 module subdiv()
 {
-    translate([r-thickness,0,0])
-    rotate([0,90,0])
-    rotate([0,0,90])
-    top_div();
-    
-    translate([r-h+thickness,0,0])
+    translate([r,0,0])
     rotate([0,-90,0])
     rotate([0,0,90])
+    top_div();
+
+    translate([r-h,0,0])
+    rotate([0,90,0])
+    rotate([0,0,-90])
     bottom_div();
 }
 
 module big_side()
 {
-    translate([r,(w/2)*(cos_A+1)/sin(A),-w/2])
-    rotate([0,0,90])
+    translate([r-h,(w/2)*(cos_A+1)/sin(A),-w/2])
+    rotate([180-A,0,0])
+    rotate([0,0,-90])
     big_arc();
 }
 
 module small_side()
 {
-    translate([r,-(w/2)*(cos_A-1)/sin(A),w/2])
-    rotate([180-A,0,0])
-    rotate([0,0,90])
+    translate([r-h,-(w/2)*(cos_A-1)/sin(A),w/2])
+    rotate([180,0,0])
+    rotate([0,0,-90])
     small_arc();
 }
 
 module arc()
 {
     joint();
-    
+
     subdiv_arc(alpha/2/subdivisions, subdivisions-1)subdiv();
 
     rotate([-A,0,0])
     subdiv_arc(alpha/2/subdivisions, subdivisions-1)subdiv();
-    
+
+    big_side();
+    small_side();
+}
+
+
+"""
+
+dtubearc = """
+
+module subdiv_arc(a, n)
+{
+    if (n > 0)
+        rotate([0,0,a])
+        {
+            children();
+            subdiv_arc(a,n-1)children();
+        }
+}
+
+module joint()
+{
+    translate([r,0,0])
+    rotate([0,-90,0])
+    rotate([0,0,A+90])
+    top_joint();
+
+    translate([r-thickness-top_space,0,0])
+    rotate([0,-90,0])
+    rotate([0,0,A+90])
+    mid_joint();
+
+    translate([r-h,0,0])
+    rotate([0,90,0])
+    rotate([0,0,-A-90])
+    bottom_joint();
+}
+
+module subdiv()
+{
+    translate([r,0,0])
+    rotate([0,-90,0])
+    rotate([0,0,90])
+    top_div();
+
+    translate([r-thickness-top_space,0,0])
+    rotate([0,-90,0])
+    rotate([0,0,90])
+    mid_div();
+
+    translate([r-h,0,0])
+    rotate([0,90,0])
+    rotate([0,0,-90])
+    bottom_div();
+}
+
+module big_side()
+{
+    translate([r-h,(w/2)*(cos_A+1)/sin(A),-w/2])
+    rotate([180-A,0,0])
+    rotate([0,0,-90])
+    big_arc();
+}
+
+module small_side()
+{
+    translate([r-h,-(w/2)*(cos_A-1)/sin(A),w/2])
+    rotate([180,0,0])
+    rotate([0,0,-90])
+    small_arc();
+}
+
+module arc()
+{
+    joint();
+
+    subdiv_arc(alpha/2/subdivisions, subdivisions-1)subdiv();
+
+    rotate([-A,0,0])
+    subdiv_arc(alpha/2/subdivisions, subdivisions-1)subdiv();
+
     big_side();
     small_side();
 }
@@ -92,9 +173,9 @@ module left_conn()
 
 module joint()
 {
-    translate([r-thickness,0,0])
-    rotate([0,90,0])
-    rotate([0,0,90-A])
+    translate([r,0,0])
+    rotate([0,-90,0])
+    rotate([0,0,A+90])
     top_joint();
 
     for (a = [0, -A, 180-A] )
@@ -351,6 +432,42 @@ thickness = {thickness};
         top_div = shapes[2]
         bottom_div = shapes[3]
     shape_module("top_div", top_div)
+    shape_module("bottom_div", bottom_div)
+
+    shape_module("big_arc", shapes[arc_ix])
+    shape_module("small_arc", shapes[arc_ix+1])
+
+    print(f"{kind}()extend()arc();")
+
+
+def dtube(shapes, kind, r, width, top_space, bottom_space, subdivisions, thickness):
+    print(f"""
+r = {r};
+w = {width};
+subdivisions = {subdivisions};
+thickness = {thickness};
+top_space = {top_space};
+bottom_space = {bottom_space};
+h = 3*thickness+top_space+bottom_space;
+
+""")
+    print(dtubearc)
+    print(generator[kind])
+
+    shape_module("top_joint", shapes[0])
+    shape_module("mid_joint", shapes[1])
+    shape_module("bottom_joint", shapes[2])
+    arc_ix = 3
+    top_div = []
+    mid_div = []
+    bottom_div = []
+    if subdivisions > 1:
+        arc_ix += 3
+        top_div = shapes[3]
+        mid_div = shapes[4]
+        bottom_div = shapes[5]
+    shape_module("top_div", top_div)
+    shape_module("mid_div", mid_div)
     shape_module("bottom_div", bottom_div)
 
     shape_module("big_arc", shapes[arc_ix])

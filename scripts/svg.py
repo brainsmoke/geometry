@@ -51,8 +51,8 @@ def start_group(x=None, y=None):
 def end_group():
     print('</g>')
 
-def path(paths):
-    print ("""<path style="fill:none;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" """)
+def path(paths, color="#000000"):
+    print (f'<path style="fill:none;stroke:{color};stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" ')
     print ('d="' + ' '.join( d(points) for points in paths ) + '" />')
 
 def unsafe_text(text, x=0, y=0, color="#000000"):

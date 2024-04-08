@@ -43,7 +43,7 @@ if args.mid_segment != None:
 shapes, shape_desc = dtube_kit.double_tube(kind, r, width, top_space, bottom_space, subdivisions, thickness, notch_size)
 
 if args.scad:
-    scad.tube(shapes, kind, r, width, height, subdivisions, thickness)
+    scad.dtube(shapes, kind, r, width, top_space, bottom_space, subdivisions, thickness)
 elif args.svg:
     plot.start(kerf_offset=kerf_offset)
 

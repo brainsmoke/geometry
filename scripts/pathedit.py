@@ -64,6 +64,30 @@ def end_bits(a, b, angle, context):
     ) )
 
 
+def start_corner(a, b, angle, context):
+
+    width = context['width']
+    indent = context['indent']
+
+    return replace_line( a, b, (
+        (       0, width ),
+        ( -indent, FLEX  ),
+        (       0, 0     ),
+    ) )
+
+
+def end_corner(a, b, angle, context):
+
+    width = context['width']
+    indent = context['indent']
+
+    return replace_line( a, b, (
+        (       0, 0     ),
+        ( -indent, FLEX  ),
+        (       0, width ),
+    ) )
+
+
 def cut_corners(a, b, angle, context):
 
     width = context['width']
@@ -156,9 +180,9 @@ def replace_line(a, b, jag):
     
     l = 0
     for indent, w in jag:
-        edges.append( (x + dx*l - dy*indent, y + dy*l + dx*indent) )
+        edges.append( (x + dx*l + dy*indent, y + dy*l - dx*indent) )
         l += w.real + w.imag*flex_factor
-        edges.append( (x + dx*l - dy*indent, y + dy*l + dx*indent) )
+        edges.append( (x + dx*l + dy*indent, y + dy*l - dx*indent) )
 
     if jag[0][0] == 0:
         edges[0] = a # keep float equality
@@ -169,15 +193,15 @@ def replace_line(a, b, jag):
 #    print(edges)
     return edges
 
-def lengths_and_angles_to_polyline(lengths, arcs):
-   v = 0, 0
-   a = 0
+def lengths_and_angles_to_polyline(lengths, arcs, start_at=(0,0), start_angle=0):
+   v = start_at
+   a = start_angle
    poly = [v]
    for l, da in itertools.zip_longest(lengths, arcs, fillvalue=0):
-       v = vector_add(v, (l*sin(a), l*cos(a)))
+       v = vector_add(v, (l*cos(a), l*sin(a)))
        poly.append(v)
        a += da
-   return poly[:-1]
+   return poly
 
 
 def purge_doubles(path):
@@ -212,6 +236,8 @@ shape_map = {
     'f' : full_indent,
     's' : start_bits,
     'e' : end_bits,
+    'S' : start_corner,
+    'E' : end_corner,
 }
 
 def subdivide(shape, types, angles, context, shape_map=shape_map):
@@ -219,7 +245,7 @@ def subdivide(shape, types, angles, context, shape_map=shape_map):
     for a, b, t, angle in zip(shape, shape[1:]+shape[:1], types, angles):
         edges.append( shape_map[t](a, b, angle, context))
 
-    for i in range(len(edges)-1):
+    for i in range(len(edges)):
         orig = shape[i]
         a,b = edges[i-1][-2:]
         c,d = edges[i][:2]
@@ -249,15 +275,18 @@ def polygon_crossproduct_sum(poly):
         total += cross_product(a, b, c)
     return total
 
-def flip(poly):
+def is_inside_out(poly):
+    return polygon_crossproduct_sum(poly) < 0
+
+def flip_x(poly):
     return [ (-a, b) for a, b in reversed(poly) ]
+
+def flip_y(poly):
+    return [ (a, -b) for a, b in reversed(poly) ]
 
 def grow(poly, width):
 
     points = []
-
-    if polygon_crossproduct_sum(poly) < 0:
-        width = -width
 
     for a, b, c in zip(poly[-1:]+poly[:-1], poly, poly[1:]+poly[:1]):
         ax, ay = a

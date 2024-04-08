@@ -55,24 +55,24 @@ def chiral_2_to_1(r, width, subdivisions=1, kind='penta'):
     shapes = []
 
     shapes.append( [
-        ( -facet_r,                    -half_w ),
         ( -facet_r,                     half_w ),
-        (  (half_w)* (cos_A - 1)/sin_A, half_w ),
-        (  cos_A*facet_r -sin_A*half_w, facet_r*sin_A +half_w*cos_A ),
-        (  cos_A*facet_r +sin_A*half_w, facet_r*sin_A -half_w*cos_A ),
-        (  (half_w)* (cos_A + 1)/sin_A, half_w ),
-        (  facet_r,                     half_w ),
-        (  facet_r,                    -half_w )
+        ( -facet_r,                    -half_w ),
+        (  (half_w)* (cos_A - 1)/sin_A,-half_w ),
+        (  cos_A*facet_r -sin_A*half_w,-facet_r*sin_A -half_w*cos_A ),
+        (  cos_A*facet_r +sin_A*half_w,-facet_r*sin_A +half_w*cos_A ),
+        (  (half_w)* (cos_A + 1)/sin_A,-half_w ),
+        (  facet_r,                    -half_w ),
+        (  facet_r,                     half_w )
     ] )
 
     shape_counts = [ arc_count * 2 ]
 
     if subdivisions > 1:
         shapes.append( [
-            ( -facet_r, -half_w ),
             ( -facet_r,  half_w ),
-            (  facet_r,  half_w ),
-            (  facet_r, -half_w )
+            ( -facet_r, -half_w ),
+            (  facet_r, -half_w ),
+            (  facet_r,  half_w )
         ] )
         shape_counts.append( arc_count * 3 * (subdivisions-1) )
 
