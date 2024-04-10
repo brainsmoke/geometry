@@ -27,25 +27,38 @@ def start(margin=3, width=600, height=400, kerf_offset=0):
 def end():
     svg.footer()
 
-def plot(paths, text=None):
+def plot(cuts=None, engravings=None, text=None):
 
-    inside_out = [ pathedit.is_inside_out(p) for p in paths ]
+    if cuts == None:
+        cuts = []
+
+    if engravings == None:
+        engravings = []
+
+    inside_out = [ pathedit.is_inside_out(p) for p in cuts ]
 
     if grow != 0:
-        paths = [ pathedit.grow(p, grow) for p in paths ]
+        cuts = [ pathedit.grow(p, grow) for p in cuts ]
 
     if flip_y:
-        paths = [ pathedit.flip_y(p) for p in paths ]
+        cuts = [ pathedit.flip_y(p) for p in cuts ]
+        engravings = [ pathedit.flip_y(p) for p in engravings ]
 
-    x, y, w, h = box(paths)
+    x, y, w, h = box(cuts+engravings)
 
     global cur_x, cur_y, next_y
     if cur_x != 0 and cur_x + pad_x + w > max_x:
         cur_x, cur_y = 0, next_y
 
     svg.start_group(cur_x-x, cur_y-y)
-    svg.path( [ p for i,p in enumerate(paths) if not inside_out[i] ], color="#000000")
-    svg.path( [ p for i,p in enumerate(paths) if     inside_out[i] ], color="#0000ff")
+    outside_cuts = [ p for i,p in enumerate(cuts) if not inside_out[i] ]
+    inside_cuts  = [ p for i,p in enumerate(cuts) if     inside_out[i] ]
+
+    for shape, color in ( (engravings,   "#00ff00"),
+                          (inside_cuts,  "#0000ff"),
+                          (outside_cuts, "#000000") ):
+        if len(shape) > 0:
+            svg.path( shape, color=color )
 
     if text != None:
         svg.unsafe_text(text, x=x+w/2, y=y+h/2, color='#ff0000')

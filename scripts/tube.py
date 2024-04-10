@@ -52,7 +52,7 @@ elif args.svg:
     plot.start(kerf_offset=kerf_offset)
 
     for points, desc in zip(shapes, shape_desc):
-        plot.plot(points, desc)
+        plot.plot(points, text=desc)
  
     plot.end()
 
