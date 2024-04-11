@@ -241,6 +241,10 @@ shape_map = {
 }
 
 def subdivide(shape, types, angles, context, shape_map=shape_map):
+
+    if angles == None:
+        angles = [None]*len(shape)
+
     edges = []
     for a, b, t, angle in zip(shape, shape[1:]+shape[:1], types, angles):
         edges.append( shape_map[t](a, b, angle, context))

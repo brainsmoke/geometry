@@ -33,9 +33,9 @@ def double_tube(kind, r, width, top_space, bottom_space, subdivisions, thickness
     ctx2['width'] *= 1.5
 
     shapes = [
-        [ pathedit.subdivide(top_joint, 'IccIccIc', (dihedral,0,0,dihedral,0,0,dihedral,0), ctx) ],
-        [ pathedit.subdivide(mid_joint, 'IbbIESIb', (dihedral,0,0,dihedral,0,0,dihedral,0), ctx2) ],
-        [ pathedit.flip_x(pathedit.subdivide(bottom_joint, 'IccIccIc', (dihedral,0,0,dihedral,0,0,dihedral,0), ctx)) ],
+        [ pathedit.subdivide(top_joint, 'IccIccIc', None, ctx) ],
+        [ pathedit.subdivide(mid_joint, 'IbbIESIb', None, ctx2) ],
+        [ pathedit.flip_x(pathedit.subdivide(bottom_joint, 'IccIccIc', None, ctx)) ],
     ]
 
     c1, c2, c3 = top_tiling['shape_counts'][0], mid_tiling['shape_counts'][0], bottom_tiling['shape_counts'][0]
@@ -52,9 +52,9 @@ def double_tube(kind, r, width, top_space, bottom_space, subdivisions, thickness
         mid_div = mid_tiling['shapes'][1]
         bottom_div = bottom_tiling['shapes'][1]
         shapes += [
-            [ pathedit.subdivide(top_div, 'IcIc', (dihedral,0,dihedral,0), ctx) ],
-            [ pathedit.subdivide(mid_div, 'IbIb', (dihedral,0,dihedral,0), ctx2) ],
-            [ pathedit.flip_x(pathedit.subdivide(bottom_div, 'IcIc', (dihedral,0,dihedral,0), ctx)) ],
+            [ pathedit.subdivide(top_div, 'IcIc', None, ctx) ],
+            [ pathedit.subdivide(mid_div, 'IbIb', None, ctx2) ],
+            [ pathedit.flip_x(pathedit.subdivide(bottom_div, 'IcIc', None, ctx)) ],
         ]
 
         c4, c5, c6 = top_tiling['shape_counts'][1], mid_tiling['shape_counts'][1], bottom_tiling['shape_counts'][1]
@@ -113,8 +113,8 @@ def double_tube(kind, r, width, top_space, bottom_space, subdivisions, thickness
     small_side = pathedit.lengths_and_angles_to_polyline(lengths_arc_small, angles_arc_small)
     large_side = pathedit.lengths_and_angles_to_polyline(lengths_arc_large, angles_arc_large)
 
-    small_side_shape = [ pathedit.subdivide(small_side, notches_small, (0,)*len(small_side), ctx ) ]
-    large_side_shape = [ pathedit.subdivide(large_side, notches_large, (0,)*len(large_side), ctx ) ]
+    small_side_shape = [ pathedit.subdivide(small_side, notches_small, None, ctx ) ]
+    large_side_shape = [ pathedit.subdivide(large_side, notches_large, None, ctx ) ]
 
     mid_lengths_small = [ line_len(mid_joint, 2) ] + mid_div_len + [ line_len(mid_joint, 1) ] 
     mid_lengths_large = [ line_len(mid_joint, 4) ] + mid_div_len + [ line_len(mid_joint, 7) ] \
@@ -124,13 +124,13 @@ def double_tube(kind, r, width, top_space, bottom_space, subdivisions, thickness
     mid_arcs_large = [ dihedral - tau/2 ] * (subdivisions+1)*2
 
     mid_holes_small = pathedit.lengths_and_angles_to_polyline(mid_lengths_small, mid_arcs_small, start_at=(0, thickness+bottom_space))
-    mid_holes_small = pathedit.subdivide(mid_holes_small, 'b'*(subdivisions+1), (0,)*len(mid_holes_small), ctx2)
+    mid_holes_small = pathedit.subdivide(mid_holes_small, 'b'*(subdivisions+1), None, ctx2)
     for s in range(subdivisions+1):
         small_side_shape.append( rev(mid_holes_small[s*11+1:s*11+5]) )
         small_side_shape.append( rev(mid_holes_small[s*11+5:s*11+9]) )
 
     mid_holes_large = pathedit.lengths_and_angles_to_polyline(mid_lengths_large, mid_arcs_large, start_at=(0, thickness+bottom_space))
-    mid_holes_large = pathedit.subdivide(mid_holes_large, 'I'+'b'*(subdivisions*2-1)+'I', (0,)*len(mid_holes_large), ctx2)
+    mid_holes_large = pathedit.subdivide(mid_holes_large, 'I'+'b'*(subdivisions*2-1)+'I', None, ctx2)
 
     for s in range(subdivisions*2-1):
         large_side_shape.append( rev(mid_holes_large[s*11+3:s*11+7]) )
