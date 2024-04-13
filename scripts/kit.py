@@ -7,6 +7,8 @@ def line_len(shape, ix):
 
 def tube(kind, r, width, height, subdivisions, thickness, notch_width):
 
+    objects = []
+
     radius_tiling = sphere_tilings.chiral_2_to_1(r,           width, subdivisions, kind)
     top_tiling    = sphere_tilings.chiral_2_to_1(r-thickness, width, subdivisions, kind)
     bottom_tiling = sphere_tilings.chiral_2_to_1(r-height,    width, subdivisions, kind)
@@ -24,15 +26,15 @@ def tube(kind, r, width, height, subdivisions, thickness, notch_width):
         'indent': thickness
     }
 
-    shapes = [
-        [ pathedit.subdivide(top_joint, 'IccIccIc', None, ctx) ],
-        [ pathedit.flip_x(pathedit.subdivide(bottom_joint, 'IccIccIc', None, ctx)) ],
-    ]
-
     c1, c2 = top_tiling['shape_counts'][0], bottom_tiling['shape_counts'][0]
 
-    shape_desc = [ f'top joint {c1}x',
-                   f'bottom joint {c2}x']
+    objects.append( ( [ pathedit.subdivide(top_joint, 'IccIccIc', None, ctx) ],
+                      None,
+                      f'top joint {c1}x') )
+
+    objects.append( ( [ pathedit.flip_x(pathedit.subdivide(bottom_joint, 'IccIccIc', None, ctx)) ],
+                      None,
+                      f'bottom joint {c2}x' ) )
 
     radius_div_len, bottom_div_len = [], []
 
@@ -40,15 +42,14 @@ def tube(kind, r, width, height, subdivisions, thickness, notch_width):
         radius_div = radius_tiling['shapes'][1]
         top_div = top_tiling['shapes'][1]
         bottom_div = bottom_tiling['shapes'][1]
-        shapes += [
-            [ pathedit.subdivide(top_div, 'IcIc', None, ctx) ],
-            [ pathedit.flip_x(pathedit.subdivide(bottom_div, 'IcIc', None, ctx)) ],
-        ]
-
         c3, c4 = top_tiling['shape_counts'][1], bottom_tiling['shape_counts'][1]
+        objects.append( ( [ pathedit.subdivide(top_div, 'IcIc', None, ctx) ],
+                          None,
+                          f'top division {c3}x' ) )
 
-        shape_desc += [ f'top division {c3}x',
-                        f'bottom division {c4}x' ]
+        objects.append( ( [ pathedit.flip_x(pathedit.subdivide(bottom_div, 'IcIc', None, ctx)) ],
+                          None,
+                          f'bottom division {c4}x' ) )
 
         bottom_div_len = [ line_len(bottom_div, 1) ] * (subdivisions-1)
         radius_div_len = [ line_len(radius_div, 1) ] * (subdivisions-1)
@@ -90,13 +91,15 @@ def tube(kind, r, width, height, subdivisions, thickness, notch_width):
     small_side = pathedit.lengths_and_angles_to_polyline(lengths_arc_small, angles_arc_small)
     large_side = pathedit.lengths_and_angles_to_polyline(lengths_arc_large, angles_arc_large)
 
-    shapes.append( [ pathedit.subdivide(large_side, notches_large, None, ctx ) ] )
-    shapes.append( [ pathedit.subdivide(small_side, notches_small, None, ctx ) ] )
+    objects.append( ( [ pathedit.subdivide(large_side, notches_large, None, ctx ) ],
+                      None,
+                      f'large side {c1}x' ) )
 
-    shape_desc += [ f'large side {c1}x',
-                    f'small side {c1}x' ]
+    objects.append( ( [ pathedit.subdivide(small_side, notches_small, None, ctx ) ],
+                      None,
+                      f'small side {c1}x' ) )
 
-    return shapes, shape_desc
+    return objects
 
 def flat(kind, r, width, subdivisions, thickness, notch_depth):
 
@@ -107,10 +110,16 @@ def flat(kind, r, width, subdivisions, thickness, notch_depth):
 
     ctx = { 'width' : thickness, 'indent': notch_depth }
 
-    shapes = []
-    shapes.append( [pathedit.subdivide(tiling_shapes[0], '2II2II2I', None, ctx)] )
+    objects = []
+    objects.append( ( [ pathedit.subdivide(tiling_shapes[0], '2II2II2I', None, ctx) ],
+                      None,
+                      f'{tiling["shape_counts"][0]}x' ) )
+
+
     for i in range(1, len(tiling_shapes)):
-        shapes.append( [pathedit.subdivide(tiling_shapes[i], '2I2I', None, ctx)] )
+        objects.append( ( [ pathedit.subdivide(tiling_shapes[i], '2I2I', None, ctx) ],
+                           None,
+                           f'{tiling["shape_counts"][i]}x' ) )
 
     v1 = cmath.rect(notch_depth, 3*(cmath.tau/8)+dihedral/2)
     d1 = cmath.rect(thickness,   1*(cmath.tau/8)+dihedral/2)
@@ -119,9 +128,7 @@ def flat(kind, r, width, subdivisions, thickness, notch_depth):
 
     joint = [ (z.real, z.imag) for z in (-d2, v2-d2, v2, 0, v1, v1-d1, -d1) ]
 
-    shapes.append([joint])
-    c = tiling['shape_counts'][0] * 6/2
-    shape_desc.append(f'{c}x')
+    objects.append( ( [joint], None, f'{tiling["shape_counts"][0]*6//2}x' ) )
 
-    return shapes, shape_desc
+    return objects
 

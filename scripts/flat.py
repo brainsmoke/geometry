@@ -38,15 +38,16 @@ for seg_size, r_off in ( (args.segment_top,     0),
     if seg_size != None:
         r = sphere_tilings.radius_from_segment_size(seg_size, subdivisions, kind) + r_off
 
-shapes, shape_desc = kit.flat(kind, r, width, subdivisions, thickness, notch_depth)
+objects = kit.flat(kind, r, width, subdivisions, thickness, notch_depth)
 
 if args.scad:
-    scad.flat(shapes, kind, r, width, subdivisions, thickness)
+    paths = [ o[0] for o in objects ]
+    scad.flat(paths, kind, r, width, subdivisions, thickness)
 elif args.svg:
     plot.start(kerf_offset=kerf_offset)
 
-    for points, desc in zip(shapes, shape_desc):
-        plot.plot(points, text=desc)
+    for cuts, engravings, desc in objects:
+        plot.plot(cuts, engravings, text=desc)
  
     plot.end()
 
