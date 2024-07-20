@@ -37,9 +37,6 @@ A=acos(cos_A);
 cos_alpha=1/(1-cos_A)-1;
 alpha=acos(cos_alpha);
 
-function arc_angle() = 3/2 * alpha;
-function corner_angle() = A;
-
 include <arcs.scad>
 
 module step_x()

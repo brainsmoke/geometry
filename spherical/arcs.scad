@@ -1,4 +1,7 @@
 
+function arc_angle() = 3/2 * alpha;
+function corner_angle() = A;
+
 module arc(r, w, h)
 {
     rotate_extrude(angle=alpha*3/2)
