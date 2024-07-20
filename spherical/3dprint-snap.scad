@@ -25,7 +25,7 @@ base_angle = min(corner_angle(),180-corner_angle());
 hook_offset = (w/2)*(1/sin(base_angle)-1/tan(base_angle));
 base_depth = w/tan(base_angle);
 
-max_latch_radius = sqrt( pow(r-w/2+hook_width/2+notch_radius+margin_v, 2) +
+max_latch_radius = sqrt( pow(r-h/2+hook_width/2+notch_radius+margin_v, 2) +
                          pow((w/2+margin_h)*sin(base_angle), 2));
 
 max_hook_depth = sin(base_angle)*(base_depth + hook_depth + margin_h)+margin_v*cos(base_angle);
@@ -45,7 +45,7 @@ module shape()
 			both_sides()
 				translate([r-h/2,hook_offset,-w/2])
 					rotate([0,0,180])
-						hook(h, hook_width, hook_depth, hook_min_width,
+						hook(w, hook_width, hook_depth, hook_min_width,
 						     notch_radius, notch_ypos,
 						     base_depth+e);
 			chopped_arc(r,w,h);
@@ -55,7 +55,7 @@ module shape()
 			step_x()
 				translate([r-h/2,hook_offset,-w/2])
 					rotate([0,0,180])
-						latch(h, hook_width, hook_depth, hook_min_width,
+						latch(w, hook_width, hook_depth, hook_min_width,
 						      notch_radius, notch_ypos,
 							  base_depth+e, margin_v, margin_h);
 }
