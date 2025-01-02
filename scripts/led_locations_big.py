@@ -1,3 +1,6 @@
+
+# python led_locations_big.py 39.69147828724952 > leds_real_size.json
+
 import math
 
 import sphere_tilings
@@ -6,7 +9,7 @@ from linear import *
 A, alpha = sphere_tilings.chiral_2_to_1_angles(kind='penta')
 
 
-step_x = matrix_mul( rot_z_matrix(alpha/2), rot_x_matrix(A) )
+step_x = matrix_mul( rot_x_matrix(-A), rot_z_matrix(-alpha/2) )
 step_y = matrix_mul( rot_z_matrix(3*alpha/2), rot_x_matrix(math.pi) )
 
 strip_bend = 3*alpha/2
@@ -19,29 +22,22 @@ def penta():
     m = identity_matrix()
     for i in range(5):
         yield m
+        m = matrix_mul(m, step_y)
         m = matrix_mul(m, step_x)
+        m = matrix_mul(m, step_y)
 
 def extend():
     m = identity_matrix()
     yield m
-    m = matrix_mul(m, step_y)
+    m = matrix_mul(m, step_x)
+    yield m
+    m = matrix_mul(m, step_x)
+    yield m
     m = matrix_mul(m, step_x)
     m = matrix_mul(m, step_y)
     yield m
-    m = matrix_mul(m, step_y)
-    m = matrix_mul(m, step_x)
-    m = matrix_mul(m, step_y)
-    yield m
-    m = matrix_mul(m, step_y)
     m = matrix_mul(m, step_x)
     yield m
-    m = matrix_mul(m, step_y)
-    m = matrix_mul(m, step_x)
-    m = matrix_mul(m, step_y)
-    yield m
-    m = matrix_mul(m, step_y)
-    m = matrix_mul(m, step_x)
-    m = matrix_mul(m, step_y)
     m = matrix_mul(m, step_x)
     yield m
 
@@ -85,10 +81,9 @@ eye = matrix_vector_mul(Mrot, top)
 orient = matrix_look_at(led_normals, eye, north = top);
 led_normals = [ matrix_vector_mul(orient, v) for v in led_normals ]
 
-
 import sys
 
-r = int(sys.argv[1])
+r = float(sys.argv[1])
 
 def coords(c):
     x, y, z = c
