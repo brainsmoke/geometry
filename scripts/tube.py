@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import sys, cmath, argparse
+import sys, cmath, argparse, shlex
 
 import kit, sphere_tilings, scad, plot
 
@@ -9,6 +9,7 @@ parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFo
 out_group = parser.add_mutually_exclusive_group(required=True)
 out_group.add_argument('-scad', action='store_true')
 out_group.add_argument('-svg', action='store_true')
+out_group.add_argument('-info', action='store_true')
 
 parser.add_argument('-tiling', type=str, default='penta', choices=['tri', 'quad', 'penta'], help="kind of tiling")
 
@@ -44,16 +45,25 @@ for seg_size, r_off in ( (args.segment_top,     0),
     if seg_size != None:
         r = sphere_tilings.radius_from_segment_size(seg_size, subdivisions, kind) + r_off
 
+cmdline = shlex.join(sys.argv)
+comment = cmdline + f' [ r = {r:f} ]'
+
 objects = kit.tube(kind, r, width, height, subdivisions, thickness, notch_size)
 
 if args.scad:
     paths = [ o[0] for o in objects ]
+    scad.comment(comment)
     scad.tube(paths, kind, r, width, height, subdivisions, thickness)
 elif args.svg:
     plot.start(kerf_offset=kerf_offset)
 
     for cuts, engravings, desc in objects:
         plot.plot(cuts, engravings, text=desc)
+
+    plot.plot(text=comment)
  
     plot.end()
+elif args.info:
+    print (f"radius: {r:f}")
+    print (f"diameter: {r*2:f}")
 

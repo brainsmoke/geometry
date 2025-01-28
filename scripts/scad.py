@@ -498,3 +498,6 @@ thickness = {thickness};
 
     print(f"{kind}()extend()arc();")
 
+def comment(text):
+    for line in text.split('\n'):
+        print('// '+line)

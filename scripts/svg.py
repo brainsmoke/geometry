@@ -1,4 +1,6 @@
 
+from xml.sax.saxutils import escape, quoteattr
+
 def header(w=210, h=297):
    print("""<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
@@ -52,9 +54,11 @@ def end_group():
     print('</g>')
 
 def path(paths, color="#000000"):
-    print (f'<path style="fill:none;stroke:{color};stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" ')
-    print ('d="' + ' '.join( d(points) for points in paths ) + '" />')
+    attr=quoteattr(f'fill:none;stroke:{color};stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1')
+    print (f'<path style={attr} d="' + ' '.join( d(points) for points in paths ) + '" />')
 
-def unsafe_text(text, x=0, y=0, color="#000000"):
-    print(f'<text xml:space="preserve" style="font-size:5pt;line-height:1.25;font-family:sans-serif;text-anchor:middle;text-align:center;fill:{color};fill-opacity:1;" x="{x:f}" y="{y:f}">{text}</text>')
+def text(text, x=0, y=0, color="#000000"):
+    attr=quoteattr(f'font-size:5pt;line-height:1.25;font-family:sans-serif;text-anchor:middle;text-align:center;fill:{color};fill-opacity:1;')
+    text = escape(text)
+    print(f'<text xml:space="preserve" style={attr} x="{x:f}" y="{y:f}">{text}</text>')
 

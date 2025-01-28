@@ -11,6 +11,9 @@ grow = 0
 flip_y = True # in the SVG coordinate system, higher Y coordinates are lower
 
 def box(point_list):
+    if len(point_list) == 0:
+        return (0,0,0,0)
+
     x = min(x for points in point_list for x,_ in points)
     y = min(y for points in point_list for _,y in points)
     w = max(x for points in point_list for x,_ in points) - x
@@ -61,7 +64,7 @@ def plot(cuts=None, engravings=None, text=None):
             svg.path( shape, color=color )
 
     if text != None:
-        svg.unsafe_text(text, x=x+w/2, y=y+h/2, color='#ff0000')
+        svg.text(text, x=x+w/2, y=y+h/2, color='#ff0000')
     svg.end_group()
     cur_x += math.ceil(w + pad_x)
     next_y = max(next_y, math.ceil(cur_y+pad_y+h))
