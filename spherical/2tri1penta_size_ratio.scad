@@ -2,10 +2,11 @@ $fn=100;
 e=.001;
 
 r=100;
-w=6;
+w=1;
 h=6;
-size_ratio_triangle = 2;
-size_ratio_pentagon = 1;
+
+size_ratio_triangle = (1+sin(360.*$t))/2;
+size_ratio_pentagon = 1-size_ratio_triangle;
 
 
 n_triangles = 20;
