@@ -40,6 +40,20 @@ def sticky_outy_bits(a, b, angle, context):
     ) )
 
 
+def sticky_inny_bits(a, b, angle, context):
+
+    width = context['width']
+    indent = context['indent']
+
+    return replace_line( a, b, (
+        (       0, width ),
+        ( -indent, width ),
+        (       0, FLEX  ),
+        ( -indent, width ),
+        (       0, width ),
+    ) )
+
+
 def start_bits(a, b, angle, context):
 
     width = context['width']
@@ -227,6 +241,7 @@ shape_map = {
 #    'L' : jagged_longedge,
     '2' : two_notches,
     'b' : sticky_outy_bits,
+    'B' : sticky_inny_bits,
     'c' : cut_corners,
     'C' : cut_corners_inverse,
     'a' : alt_corners_inverse,
