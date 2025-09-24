@@ -456,7 +456,7 @@ def shape_module(name, paths):
 
 def prism_module(name, top, bottom, height):
     n = len(bottom)
-    points = ','.join( f"[{x}, {-y}, {h}]" for path, h in [(bottom,-height),(top,0)] for x,y in path )
+    points = ','.join( f"[{x}, {-y}, {h}]" for path, h in [(top,0),(bottom,-height)] for x,y in path )
     faces = [ list(range(n)), list(range(n*2-1, n-1, -1)) ]
     for i in range(n):
         a, b, c, d = (i+1)%n, i, n+i, n+(i+1)%n
