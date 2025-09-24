@@ -9,6 +9,7 @@ parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFo
 out_group = parser.add_mutually_exclusive_group(required=True)
 out_group.add_argument('-scad', action='store_true')
 out_group.add_argument('-svg', action='store_true')
+out_group.add_argument('-info', action='store_true')
 
 parser.add_argument('-tiling', type=str, default='penta', choices=['tri', 'quad', 'penta'], help="kind of tiling")
 
@@ -51,4 +52,9 @@ elif args.svg:
         plot.plot(points, text=desc)
  
     plot.end()
+elif args.info:
+    print (f"outer radius: {r:f}")
+    print (f"inner radius: {r-height:f}")
+    print (f"height: {height:f}")
+    print (f"diameter: {r*2:f}")
 
