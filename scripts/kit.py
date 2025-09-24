@@ -132,3 +132,15 @@ def flat(kind, r, width, subdivisions, thickness, notch_depth):
 
     return objects
 
+def volume(kind, r, width, height, subdivisions):
+
+    top = sphere_tilings.chiral_2_to_1(r, width, subdivisions, kind)['shapes']
+    bottom = sphere_tilings.chiral_2_to_1(r-height, width, subdivisions, kind)['shapes']
+
+    objects = []
+    for i in range(len(top)):
+        objects.append( (top[i], None, '') )
+        objects.append( (bottom[i], None, '') )
+
+    return objects
+

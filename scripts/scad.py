@@ -16,14 +16,14 @@ module subdiv_arc(a, n)
 
 module joint()
 {
-    translate([r,0,0])
-    rotate([0,-90,0])
-    rotate([0,0,A+90])
+    translate([r-thickness,0,0])
+    rotate([0,90,0])
+    rotate([0,0,90-A])
     top_joint();
 
-    translate([r-h,0,0])
-    rotate([0,90,0])
-    rotate([0,0,-A-90])
+    translate([r-h+thickness,0,0])
+    rotate([0,-90,0])
+    rotate([0,0,A-90])
     bottom_joint();
 }
 
@@ -43,16 +43,17 @@ module subdiv()
 module big_side()
 {
     translate([r-h,(w/2)*(cos_A+1)/sin(A),-w/2])
-    rotate([180-A,0,0])
-    rotate([0,0,-90])
+    rotate([-A,0,0])
+    rotate([0,0,90])
+    translate([0,0,-thickness])
     big_arc();
 }
 
 module small_side()
 {
     translate([r-h,-(w/2)*(cos_A-1)/sin(A),w/2])
-    rotate([180,0,0])
-    rotate([0,0,-90])
+    rotate([0,0,90])
+    translate([0,0,-thickness])
     small_arc();
 }
 
@@ -86,36 +87,36 @@ module subdiv_arc(a, n)
 
 module joint()
 {
-    translate([r,0,0])
-    rotate([0,-90,0])
-    rotate([0,0,A+90])
+    translate([r-thickness,0,0])
+    rotate([0,90,0])
+    rotate([0,0,90-A])
     top_joint();
 
-    translate([r-thickness-top_space,0,0])
-    rotate([0,-90,0])
-    rotate([0,0,A+90])
+    translate([r-2*thickness-top_space,0,0])
+    rotate([0,90,0])
+    rotate([0,0,90-A])
     mid_joint();
 
-    translate([r-h,0,0])
-    rotate([0,90,0])
-    rotate([0,0,-A-90])
+    translate([r-h+thickness,0,0])
+    rotate([0,-90,0])
+    rotate([0,0,A-90])
     bottom_joint();
 }
 
 module subdiv()
 {
-    translate([r,0,0])
-    rotate([0,-90,0])
+    translate([r-thickness,0,0])
+    rotate([0,90,0])
     rotate([0,0,90])
     top_div();
 
-    translate([r-thickness-top_space,0,0])
-    rotate([0,-90,0])
+    translate([r-2*thickness-top_space,0,0])
+    rotate([0,90,0])
     rotate([0,0,90])
     mid_div();
 
-    translate([r-h,0,0])
-    rotate([0,90,0])
+    translate([r-h+thickness,0,0])
+    rotate([0,-90,0])
     rotate([0,0,-90])
     bottom_div();
 }
@@ -123,16 +124,17 @@ module subdiv()
 module big_side()
 {
     translate([r-h,(w/2)*(cos_A+1)/sin(A),-w/2])
-    rotate([180-A,0,0])
-    rotate([0,0,-90])
+    rotate([-A,0,0])
+    rotate([0,0,90])
+    translate([0,0,-thickness])
     big_arc();
 }
 
 module small_side()
 {
     translate([r-h,-(w/2)*(cos_A-1)/sin(A),w/2])
-    rotate([180,0,0])
-    rotate([0,0,-90])
+    rotate([0,0,90])
+    translate([0,0,-thickness])
     small_arc();
 }
 
@@ -167,15 +169,15 @@ module subdiv_arc(a, n)
 module left_conn()
 {
 	translate([r-thickness,(r-thickness)*tan(alpha/2/subdivisions/2), (w/2-thickness)/3])
-	rotate([0,0,45+alpha/2/subdivisions/2])
+	rotate([0,0,-45+alpha/2/subdivisions/2])
 	connector();
 }
 
 module joint()
 {
-    translate([r,0,0])
-    rotate([0,-90,0])
-    rotate([0,0,A+90])
+    translate([r-thickness,0,0])
+    rotate([0,90,0])
+    rotate([0,0,90-A])
     top_joint();
 
     for (a = [0, -A, 180-A] )
@@ -192,6 +194,48 @@ module subdiv()
     for (a = [0, 180] )
         rotate([a,0,0])
             left_conn();
+}
+
+
+module arc()
+{
+    joint();
+
+    subdiv_arc(alpha/2/subdivisions, subdivisions-1)subdiv();
+
+    rotate([-A,0,0])
+    subdiv_arc(alpha/2/subdivisions, subdivisions-1)subdiv();
+}
+
+
+"""
+
+volumearc = """
+
+module subdiv_arc(a, n)
+{
+    if (n > 0)
+        rotate([0,0,a])
+        {
+            children();
+            subdiv_arc(a,n-1)children();
+        }
+}
+
+module joint()
+{
+    translate([r,0,0])
+    rotate([0,90,0])
+    rotate([0,0,90-A])
+    joint_volume();
+}
+
+module subdiv()
+{
+    translate([r,0,0])
+    rotate([0,90,0])
+    rotate([0,0,90])
+    div_volume();
 }
 
 
@@ -225,8 +269,8 @@ generator = {
 phi=(1+sqrt(5))/2;
 cuberoot=pow(118*phi+85+6*sqrt(1173*phi+729), 1/3);
 cos_A=(1/6)*(4*phi+1) +
-	 (1/6)*(12*phi+7)/cuberoot -
-	 (1/6)*cuberoot;
+      (1/6)*(12*phi+7)/cuberoot -
+      (1/6)*cuberoot;
 
 A=acos(cos_A);
 
@@ -398,7 +442,7 @@ module extend()
 }
 
 def shape_module(name, paths):
-    points = ','.join( f"[{x}, {y}]" for path in paths for x,y in path )
+    points = ','.join( f"[{x}, {-y}]" for path in paths for x,y in path )
     paths_indices = []
     n = 0
     for path in paths:
@@ -409,6 +453,23 @@ def shape_module(name, paths):
 {
 	linear_extrude(thickness) polygon(["""+points+'],['+','.join(paths_indices)+"""]);
 }""")
+
+def prism_module(name, top, bottom, height):
+    n = len(bottom)
+    points = ','.join( f"[{x}, {-y}, {h}]" for path, h in [(bottom,-height),(top,0)] for x,y in path )
+    faces = [ list(range(n)), list(range(n*2-1, n-1, -1)) ]
+    for i in range(n):
+        a, b, c, d = (i+1)%n, i, n+i, n+(i+1)%n
+        faces.append([a,b,c,d])
+
+    faces_indices = ','.join( '[' + ','.join(f"{ix}" for ix in f) + ']' for f in faces )
+
+    print (f"module {name}"+""" ()
+{
+	polyhedron(["""+points+'],['+faces_indices+"""]);
+}""")
+
+
 
 def tube(shapes, kind, r, width, height, subdivisions, thickness):
     print(f"""
@@ -495,6 +556,20 @@ thickness = {thickness};
         top_div = shapes[1]
     shape_module("top_div", top_div)
     shape_module("connector", shapes[arc_ix])
+
+    print(f"{kind}()extend()arc();")
+
+def volume(shapes, kind, r, width, height, subdivisions):
+    print(f"""
+r = {r};
+w = {width};
+h = {height};
+subdivisions = {subdivisions};
+""")
+    print(volumearc)
+    print(generator[kind])
+    prism_module('joint_volume', shapes[0], shapes[1], height)
+    prism_module('div_volume', shapes[2], shapes[3], height)
 
     print(f"{kind}()extend()arc();")
 
